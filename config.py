@@ -1,6 +1,6 @@
 # -- DEV ZONE -- #
 # You can change this to anything
-VERSION = "v0.0.3-beta-1"
+VERSION = "v0.0.3_inv-beta-1"
 # -------------- #
 
 # -- General -- #
