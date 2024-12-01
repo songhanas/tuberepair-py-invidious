@@ -1,8 +1,8 @@
 from modules import get
-from flask import Blueprint, Flask, request, redirect, render_template, Response
+from flask import Blueprint, Flask, request, redirect, render_template, Response, send_file, stream_with_context
 import config
 from modules.logs import text
-from modules import yt
+import requests
 
 video = Blueprint("video", __name__)
 
@@ -105,15 +105,36 @@ def comments(videoid):
         })
 
     return error()
-    
+
+# returns backup.mp4 if an error occured while trying to get the video
+@video.route("/geterrorvideo")
+def geterrorvideo():
+    return send_file("backup.mp4")
+
 # fetches video from innertube.
 @video.route("/getvideo/<video_id>")
 def getvideo(video_id):
-
-    if not config.MEDIUM_QUALITY:
-
-        # Set mimetype since videole device don't recognized it.
-        return Response(yt.hls_video_url(video_id), mimetype="application/vnd.apple.mpegurl")
-    
-    # 360p if enabled
-    return redirect(yt.medium_quality_video_url(video_id), 307)
+    try:
+        data = get.fetch(f"{config.URL}/api/v1/videos/{video_id}")
+        if not data:
+            print("No data")
+            return redirect("/geterrorvideo", 307)
+        if not config.MEDIUM_QUALITY:
+            try:
+                print("Not implemented, falling back to 360P")
+            except:
+                print("Failed to get HLS stream")
+        # 360p if enabled
+        output = redirect("/geterrorvideo", 307)
+        size = -1
+        for video in data["formatStreams"]:
+            if "avc" in video["type"] and "mp4a" in video["type"]:
+                res = int("".join(c for c in video["resolution"] if c.isnumeric()))
+                if size == -1 or (size <= config.HLS_RESOLUTION and res > size) or (size > config.HLS_RESOLUTION and size <= res):
+                    output = redirect(video["url"], 307)
+                if (config.HLS_RESOLUTION == res):
+                    return output
+        return output
+    except:
+        print("Error Occured. Is the Invidious instance working?")
+    return redirect("/geterrorvideo", 307)

@@ -1,4 +1,4 @@
-# Version v0.0.1 (beta-3.5)
+# Version v0.0.3 (beta 1)
 from flask import Flask
 from flask_compress import Compress
 import config
