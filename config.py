@@ -21,7 +21,7 @@ HLS_RESOLUTION = 360
 
 # Set indivious instance
 # add http:// or https://
-URL = "https://invidious.schenkel.eti.br"
+URL = "https://sklempin.ddns.net:9001/"
 
 # Set port
 # Anything around 1000-10000
