@@ -21,7 +21,8 @@ HLS_RESOLUTION = 360
 
 # Set indivious instance
 # add http:// or https://
-URL = "https://sklempin.ddns.net:9001/"
+URL = "https://invidious.technicalvoid.dev/"
+#URL = "https://lekker.gay/"
 
 # Set port
 # Anything around 1000-10000
